@@ -25,7 +25,7 @@ describe('test with Backend', () => {
     expect(xhr.response.statusCode).to.equal(201)
     expect(xhr.response.body.article.body).to.equal("My\nMultiline\nBody\n\n Bye!")
     expect(xhr.response.body.article.description).to.equal("Walter's Description")
-
+  
     // Deleting the Article in order to clean the Environment
     cy.get('.banner').contains('Delete Article').click()
     })
@@ -33,5 +33,24 @@ describe('test with Backend', () => {
 
   it('Verify popular tags are displayed', () => {
     cy.get('.tag-list').should('contain', "Walter").and('contain',"Was").and('contain', 'Here')
+  })
+
+  it('Verify global feeds like count', () => {
+    cy.intercept('GET', 'https://conduit-api.bondaracademy.com/api/articles/feed*', {"articles": [], "articlesCount": 0})
+    cy.intercept('GET', 'https://conduit-api.bondaracademy.com/api/articles*', {fixture: 'articles.json'})
+
+    cy.contains('Global Feed').click()
+    cy.get('app-article-list button').then(heartList => {
+      expect(heartList[0]).to.contain('1')
+      expect(heartList[1]).to.contain('5')
+    })
+
+    cy.fixture('articles.json').then(articlesObj => {
+      const articleLink = articlesObj.articles[1].slug
+      articlesObj.articles[1].favoritesCount = 6
+      cy.intercept('POST', 'https://conduit-api.bondaracademy.com/api/articles/' + articleLink + '/favorite', articlesObj)
+    })
+
+    cy.get('app-article-list button').eq(1).click().should('contain', '6')
   })
 })

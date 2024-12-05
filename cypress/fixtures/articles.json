@@ -1,0 +1,39 @@
+{
+    "articles": [
+        {
+            "slug": "Request-from-the-API77-3",
+            "title": "Walter's Custom Article",
+            "description": "Customized Article",
+            "body": "Angular is cool",
+            "tagList": [],
+            "createdAt": "2024-11-27T22:32:48.590Z",
+            "updatedAt": "2024-11-27T22:32:48.590Z",
+            "favorited": false,
+            "favoritesCount": 1,
+            "author": {
+                "username": "CyTest",
+                "bio": "Dapifer ambulo tabella celer maiores.",
+                "image": "https://api.realworld.io/images/smiley-cyrus.jpeg",
+                "following": false
+            }
+        },
+        {
+            "slug": "Request-from-the-API44-3",
+            "title": "Request from the API44",
+            "description": "API testing is easy",
+            "body": "Angular is cool",
+            "tagList": [],
+            "createdAt": "2024-11-27T22:31:12.612Z",
+            "updatedAt": "2024-11-27T22:31:12.612Z",
+            "favorited": false,
+            "favoritesCount": 5,
+            "author": {
+                "username": "CyTest",
+                "bio": "Dapifer ambulo tabella celer maiores.",
+                "image": "https://api.realworld.io/images/smiley-cyrus.jpeg",
+                "following": false
+            }
+        }
+    ],
+    "articlesCount": 2
+}
