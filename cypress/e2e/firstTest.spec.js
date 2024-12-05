@@ -1,10 +1,11 @@
 describe('test with Backend', () => {
   
   beforeEach('Login to Application', () => {
+    cy.intercept('GET', 'https://conduit-api.bondaracademy.com/api/tags', {fixture: 'tags.json'})
     cy.loginToApplication()
   })
 
-  it.only('Verify request & response', () => {
+  it('Verify request & response', () => {
 
     // Start the intercept before to submit the info
     cy.intercept('POST', 'https://conduit-api.bondaracademy.com/api/articles/').as('postArticles')
@@ -28,5 +29,9 @@ describe('test with Backend', () => {
     // Deleting the Article in order to clean the Environment
     cy.get('.banner').contains('Delete Article').click()
     })
+  })
+
+  it('Verify popular tags are displayed', () => {
+    cy.get('.tag-list').should('contain', "Walter").and('contain',"Was").and('contain', 'Here')
   })
 })
