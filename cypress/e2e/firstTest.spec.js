@@ -1,7 +1,8 @@
 describe('test with Backend', () => {
-  
+
   beforeEach('Login to Application', () => {
-    cy.intercept('GET', 'https://conduit-api.bondaracademy.com/api/tags', {fixture: 'tags.json'})
+    cy.intercept('GET', 'https://conduit-api.bondaracademy.com/api/tags', { fixture: 'tags.json' })
+    cy.intercept({ method: 'GET', path: 'tags' }, { fixture: 'tags.json' })
     cy.loginToApplication()
   })
 
@@ -21,23 +22,23 @@ describe('test with Backend', () => {
     // Wait for the response from the interceptor
     cy.wait('@postArticles').then(xhr => {
 
-    console.log(xhr)
-    expect(xhr.response.statusCode).to.equal(201)
-    expect(xhr.response.body.article.body).to.equal("My\nMultiline\nBody\n\n Bye!")
-    expect(xhr.response.body.article.description).to.equal("Walter's Description")
-  
-    // Deleting the Article in order to clean the Environment
-    cy.get('.banner').contains('Delete Article').click()
+      console.log(xhr)
+      expect(xhr.response.statusCode).to.equal(201)
+      expect(xhr.response.body.article.body).to.equal("My\nMultiline\nBody\n\n Bye!")
+      expect(xhr.response.body.article.description).to.equal("Walter's Description")
+
+      // Deleting the Article in order to clean the Environment
+      cy.get('.banner').contains('Delete Article').click()
     })
   })
 
   it('Verify popular tags are displayed', () => {
-    cy.get('.tag-list').should('contain', "Walter").and('contain',"Was").and('contain', 'Here')
+    cy.get('.tag-list').should('contain', "Walter").and('contain', "Was").and('contain', 'Here')
   })
 
   it('Verify global feeds like count', () => {
-    cy.intercept('GET', 'https://conduit-api.bondaracademy.com/api/articles/feed*', {"articles": [], "articlesCount": 0})
-    cy.intercept('GET', 'https://conduit-api.bondaracademy.com/api/articles*', {fixture: 'articles.json'})
+    cy.intercept('GET', 'https://conduit-api.bondaracademy.com/api/articles/feed*', { "articles": [], "articlesCount": 0 })
+    cy.intercept('GET', 'https://conduit-api.bondaracademy.com/api/articles*', { fixture: 'articles.json' })
 
     cy.contains('Global Feed').click()
     cy.get('app-article-list button').then(heartList => {
@@ -52,5 +53,42 @@ describe('test with Backend', () => {
     })
 
     cy.get('app-article-list button').eq(1).click().should('contain', '6')
+  })
+
+  it('delete a new article in a global feed', () => {
+
+    const bodyRequest = {
+      "article": {
+        "tagList": [],
+        "title": "Walter's Request from the API",
+        "description": "API testing is easy",
+        "body": "Angular is cool"
+      }
+    }
+
+    cy.get('@token').then(token => {
+
+      cy.request({
+        url: 'https://conduit-api.bondaracademy.com/api/articles/',
+        headers: { 'Authorization': `Token ${token}` },
+        method: 'POST',
+        body: bodyRequest
+      }).then(response => {
+        expect(response.status).to.equal(201)
+      })
+
+      cy.contains('Global Feed').click()
+      cy.wait(500)
+      cy.get('.article-preview').first().click()
+      cy.get('.banner').contains('Delete Article').click()
+
+      cy.request({
+        url: 'https://conduit-api.bondaracademy.com/api/articles?limit=10&offset=0',
+        headers: { 'Authorization': `Token ${token}` },
+        method: 'GET'
+      }).its('body').then(body => {
+        expect(body.articles[0].title).not.to.equal("Walter's Request from the API")
+      })
+    })
   })
 })
