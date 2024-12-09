@@ -2,5 +2,5 @@
     "compilerOptions": {
       "types": ["cypress"]
     },
-    "include": ["**/*.cy.js"]
+    "include": ["**/*.spec.js"]
   }
