@@ -3,13 +3,25 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "cypress:run": "npx cypress run"
+    "delete:reports": "rm -r cypress/results/* || true",
+    "prereport": "npm run delete:reports",
+    "mochawesome:merge": "npx mochawesome-merge \"cypress/results/mochawesome/*.json\" > mochawesome.json && npx marge mochawesome.json",
+    "junit:merge": "npx junit-merge -d \"cypress/results/junit\" -o \"cypress/results/junit/results.xml\"",
+    "cypress:run": "npm run prereport && npx cypress run && npm run junit:merge && npm run mochawesome:merge"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "cypress": "^13.16.0",
+    "cypress-multi-reporters": "^2.0.4",
+    "mocha-junit-reporter": "^2.2.1",
+    "mochawesome": "^7.1.3",
+    "mochawesome-merge": "^4.3.0",
+    "mochawesome-report-generator": "^6.2.0",
     "start-server-and-test": "^2.0.8"
+  },
+  "dependencies": {
+    "junit-merge": "^2.0.0"
   }
 }
