@@ -9,6 +9,10 @@ module.exports = defineConfig({
     password:'Welcome123',
     apiUrl: 'https://conduit-api.bondaracademy.com/',
   },
+  retries: {
+    runMode: 2,
+    openMode: 0
+  },
 
   e2e: {
     setupNodeEvents(on, config) {
